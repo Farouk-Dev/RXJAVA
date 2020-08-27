@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.observables.ConnectableObservable
+import io.reactivex.rxjava3.subjects.AsyncSubject
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.ReplaySubject
@@ -17,10 +18,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        /*Hot observable 4***********************************************
-         *ReplaySubject*/
+        /*Hot observable 5***********************************************
+         *AsyncSubject*/
 
-        var subject = ReplaySubject.create<String>()
+        var subject = AsyncSubject.create<String>()
         // observer 1
         subject.subscribe { Log.d(TAG, "observer1 receive: $it") }
         subject.onNext("A")
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         subject.onNext("F")
         sleep(1000)
         subject.onNext("G")
+        subject.onComplete()
         /*******************************************************************/
     }
 }
