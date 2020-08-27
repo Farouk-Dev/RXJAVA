@@ -12,14 +12,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-       /*cold  observable************************************************/
-        var cold = Observable.intervalRange(0, 5, 0, 1, TimeUnit.SECONDS)
+        /*Hot observable 1***********************************************
+         * create hot observable from a cold observable
+         * = ConnectebleObservable*/
+
+        var hot = ConnectableObservable.intervalRange(0, 5, 0, 1, TimeUnit.SECONDS).publish()
+        hot.connect()
 
         // observer 1
-        cold.subscribe { Log.d(TAG, "observer1 receive: $it") }
+        hot.subscribe { Log.d(TAG, "observer1 receive: $it") }
         Thread.sleep(3000)
         // observer 2
-        cold.subscribe { Log.d(TAG, "observer2 receive: $it") }
+        hot.subscribe { Log.d(TAG, "observer2 receive: $it") }
         /*******************************************************************/
     }
 }
