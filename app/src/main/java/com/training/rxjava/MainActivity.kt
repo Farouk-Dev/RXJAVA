@@ -7,6 +7,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.observables.ConnectableObservable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.ReplaySubject
 import java.util.concurrent.TimeUnit
 fun sleep(time: Long){
     Thread.sleep(time)
@@ -16,10 +17,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        /*Hot observable 3***********************************************
-         *BehaviorSubject*/
+        /*Hot observable 4***********************************************
+         *ReplaySubject*/
 
-        var subject = BehaviorSubject.create<String>()
+        var subject = ReplaySubject.create<String>()
         // observer 1
         subject.subscribe { Log.d(TAG, "observer1 receive: $it") }
         subject.onNext("A")
