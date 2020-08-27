@@ -5,25 +5,37 @@ import android.os.Bundle
 import android.util.Log
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.observables.ConnectableObservable
+import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
-
+fun sleep(time: Long){
+    Thread.sleep(time)
+}
 class MainActivity : AppCompatActivity() {
     private val TAG: String = "MainActivity"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        /*Hot observable 1***********************************************
-         * create hot observable from a cold observable
-         * = ConnectebleObservable*/
+        /*Hot observable 2***********************************************
+         *PublishSubject*/
 
-        var hot = ConnectableObservable.intervalRange(0, 5, 0, 1, TimeUnit.SECONDS).publish()
-        hot.connect()
-
+        var subject = PublishSubject.create<String>()
         // observer 1
-        hot.subscribe { Log.d(TAG, "observer1 receive: $it") }
-        Thread.sleep(3000)
+        subject.subscribe { Log.d(TAG, "observer1 receive: $it") }
+        subject.onNext("A")
+        sleep(1000)
+        subject.onNext("B")
+        sleep(1000)
+        subject.onNext("C")
+        sleep(1000)
+        subject.onNext("D")
+        sleep(1000)
         // observer 2
-        hot.subscribe { Log.d(TAG, "observer2 receive: $it") }
+        subject.subscribe { Log.d(TAG, "observer2 receive: $it") }
+        subject.onNext("E")
+        sleep(1000)
+        subject.onNext("F")
+        sleep(1000)
+        subject.onNext("G")
         /*******************************************************************/
     }
 }
