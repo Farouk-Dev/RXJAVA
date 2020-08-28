@@ -1,45 +1,69 @@
 package com.training.rxjava
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import io.reactivex.rxjava3.annotations.NonNull
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.observables.ConnectableObservable
-import io.reactivex.rxjava3.subjects.AsyncSubject
-import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.reactivex.rxjava3.subjects.PublishSubject
-import io.reactivex.rxjava3.subjects.ReplaySubject
-import java.util.concurrent.TimeUnit
-fun sleep(time: Long){
-    Thread.sleep(time)
-}
+import io.reactivex.rxjava3.core.ObservableOnSubscribe
+import io.reactivex.rxjava3.core.Observer
+import io.reactivex.rxjava3.disposables.Disposable
+
+
 class MainActivity : AppCompatActivity() {
     private val TAG: String = "MainActivity"
+    private lateinit var observer: Observer<*>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        /*Hot observable 5***********************************************
-         *AsyncSubject*/
 
-        var subject = AsyncSubject.create<String>()
-        // observer 1
-        subject.subscribe { Log.d(TAG, "observer1 receive: $it") }
-        subject.onNext("A")
-        sleep(1000)
-        subject.onNext("B")
-        sleep(1000)
-        subject.onNext("C")
-        sleep(1000)
-        subject.onNext("D")
-        sleep(1000)
-        // observer 2
-        subject.subscribe { Log.d(TAG, "observer2 receive: $it") }
-        subject.onNext("E")
-        sleep(1000)
-        subject.onNext("F")
-        sleep(1000)
-        subject.onNext("G")
-        subject.onComplete()
-        /*******************************************************************/
+        /*factory method: create()**************************************/
+        val observable =
+            Observable.create(ObservableOnSubscribe<Int> {
+                for (i in 0..5) it.onNext(i)
+                it.onComplete()
+            })
+
+        /********************************************************/
+        /*factory method : just()**************************************/
+        val observable1 =
+            Observable.just(0, 1, 2, 3, 4, 5)
+
+        /********************************************************/
+
+        /*factory method : fromArray()**************************************/
+        var array = arrayOf(0, 1, 2, 3, 4, 5)
+        val observable2 =
+            Observable.fromArray(array)
+
+        /********************************************************/
+        /*factory method : range()**************************************/
+        val observable3 =
+            Observable.range(0, 5)
+        /********************************************************/
+
+        observer = object : Observer<Any?> {
+            override fun onSubscribe(d: @NonNull Disposable?) {
+                Log.d(TAG, "onSubscribe :")
+            }
+
+            override fun onNext(o: Any?) {
+                Log.d(TAG, "onNext :$o")
+            }
+
+            override fun onError(e: @NonNull Throwable?) {
+                Log.d(TAG, "onError :$e")
+            }
+
+            override fun onComplete() {
+                Log.d(TAG, "onComplete :")
+            }
+        }
+//Modify here
+//        observable.subscribe(observer as Observer<Any?>)
+//        observable1.subscribe(observer as Observer<Any?>)
+//        observable2.subscribe(observer as Observer<Any?>)
+        observable3.subscribe(observer as Observer<Any?>)
+
     }
 }
