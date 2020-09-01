@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Observable.create<Any> { emitter ->
+        Observable.create<CharSequence> { emitter ->
             editText.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     charSequence: CharSequence,
@@ -41,7 +41,15 @@ class MainActivity : AppCompatActivity() {
                 override fun afterTextChanged(editable: Editable) {}
             })
         }.doOnNext { Log.d(TAG, "upStream : $it") }
-            .filter { !it.toString().equals("12") }
-            .subscribe { Log.d(TAG, "downStream : $it") }
+            .flatMap { sendDataToApi(it) } // call other function
+            .subscribe {
+                Log.d(TAG, "call api : $it")
+            }
+    }
+
+    fun sendDataToApi(c: CharSequence): Observable<String> {
+        var observable: Observable<String> = Observable.just("call api 1 to send $c")
+        observable.subscribe { Log.d(TAG, "Api call detected : $it") }
+        return observable
     }
 }
