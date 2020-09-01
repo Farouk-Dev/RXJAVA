@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
                 override fun afterTextChanged(editable: Editable) {}
             })
         }.doOnNext { Log.d(TAG, "upStream : $it") }
-            .debounce(2,TimeUnit.SECONDS) // add delay to the observer before catching data
+            .distinctUntilChanged()
             .subscribe { Log.d(TAG, "downStream : $it") }
     }
 }
