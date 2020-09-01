@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
                 override fun afterTextChanged(editable: Editable) {}
             })
         }.doOnNext { Log.d(TAG, "upStream : $it") }
-            .distinctUntilChanged()
+            .filter { !it.toString().equals("12") }
             .subscribe { Log.d(TAG, "downStream : $it") }
     }
 }
