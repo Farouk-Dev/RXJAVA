@@ -1,30 +1,47 @@
 package com.training.rxjava
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
+import android.view.View
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.annotations.NonNull
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableOnSubscribe
-import io.reactivex.rxjava3.core.Observer
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_main.*
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
     private val TAG: String = "MainActivity"
-    private lateinit var observer: Observer<*>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Observable.just(1,2,3,4,5)
-            .subscribeOn(Schedulers.io())// the first observeOn() will be taken into consideration
-            .doOnNext { item ->  Log.d(TAG, "upStream :$item ,current thread :${Thread.currentThread().name}")}  // upStream
-            .observeOn(Schedulers.io())
-            .observeOn(Schedulers.computation()) // the last observeOn() will be taken into consideration
-            .subscribe { item ->  Log.d(TAG, "downStream :$item,current thread :${Thread.currentThread().name}") } //downStream
+        Observable.create<Any> { emitter ->
+            editText.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    charSequence: CharSequence,
+                    i: Int,
+                    i1: Int,
+                    i2: Int
+                ) {
+                }
+
+                override fun onTextChanged(
+                    charSequence: CharSequence,
+                    i: Int,
+                    i1: Int,
+                    i2: Int
+                ) {
+                    if (charSequence.length > 0)
+                        emitter.onNext(charSequence)
+                }
+
+                override fun afterTextChanged(editable: Editable) {}
+            })
+        }.doOnNext { Log.d(TAG, "upStream : $it") }
+            .map { it.toString().toInt() * 2 }
+            .subscribe { Log.d(TAG, "downStream : $it") }
     }
 }
